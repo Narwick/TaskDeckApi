@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - appnet
+
+  backend:
+    build: .
+    container_name: backend
+    restart: always
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgres://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
+      NODE_ENV: production
+    ports:
+      - "3001:3001"
+    networks:
+      - appnet
+
+volumes:
+  pgdata:
+
+networks:
+  appnet:
+    name: backendnet
