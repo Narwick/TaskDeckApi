@@ -40,34 +40,67 @@ export class WeekReportsController extends BaseController<WeekReportsService, We
   async getById(req: any, res: Response) {
     const result = await this.weekReportsService.getById({ id: req.params.id, valid: false });
     if (!result || (result as any).wer_user_id !== Number(req.usr_id)) {
-      return res.status(404).send({ message: 'Registro não encontrado.' });
+      return res.status(404).send({ message: "Registro não encontrado." });
     }
     res.status(200).send(result);
   }
 
-  async updateById(req: any, res: Response) {
-    const existing = await this.weekReportsService.getById({ id: req.params.id, valid: false });
+  async updateById(req: any, res: Response): Promise<void> {
+    const existing = await this.weekReportsService.getById({
+      id: req.params.id,
+      valid: false,
+    });
+
     if (!existing || (existing as any).wer_user_id !== Number(req.usr_id)) {
-      return res.status(404).send({ message: 'Registro não encontrado.' });
+      res.status(404).send({
+        message: "Registro não encontrado.",
+      });
+
+      return;
     }
-    if (this.schema) this.schema.validateUpdate({ data: req.body, id: Number(req.params.id) });
-    const result = await this.weekReportsService.updateById({ id: req.params.id, data: req.body, valid: false });
+
+    if (this.schema) {
+      this.schema.validateUpdate({
+        data: req.body,
+        id: Number(req.params.id),
+      });
+    }
+
+    const result = await this.weekReportsService.updateById({
+      id: req.params.id,
+      data: req.body,
+      valid: false,
+    });
+
     res.status(200).send(result);
   }
 
-  async deleteById(req: any, res: Response) {
-    const existing = await this.weekReportsService.getById({ id: req.params.id, valid: false });
+  async deleteById(req: any, res: Response): Promise<void> {
+    const existing = await this.weekReportsService.getById({
+      id: req.params.id,
+      valid: false,
+    });
+
     if (!existing || (existing as any).wer_user_id !== Number(req.usr_id)) {
-      return res.status(404).send({ message: 'Registro não encontrado.' });
+      res.status(404).send({
+        message: "Registro não encontrado.",
+      });
+
+      return;
     }
-    const result = await this.weekReportsService.deleteById({ id: req.params.id, valid: false });
+
+    const result = await this.weekReportsService.deleteById({
+      id: req.params.id,
+      valid: false,
+    });
+
     res.status(200).send(result);
   }
 
   async generateShareToken(req: any, res: Response) {
     const existing = await this.weekReportsService.getById({ id: req.params.id, valid: false });
     if (!existing || (existing as any).wer_user_id !== Number(req.usr_id)) {
-      return res.status(404).send({ message: 'Registro não encontrado.' });
+      return res.status(404).send({ message: "Registro não encontrado." });
     }
     const token = await this.weekReportsService.generateShareToken(Number(req.params.id));
     res.status(200).send({ token });
@@ -75,7 +108,7 @@ export class WeekReportsController extends BaseController<WeekReportsService, We
 
   async getByShareToken(req: any, res: Response) {
     const report = await this.weekReportsService.getByShareToken(req.params.token);
-    if (!report) return res.status(404).send({ message: 'Relatório não encontrado.' });
+    if (!report) return res.status(404).send({ message: "Relatório não encontrado." });
     res.status(200).send(report);
   }
 }
