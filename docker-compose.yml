@@ -19,8 +19,6 @@ services:
     image: redis:7
     container_name: redis
     restart: always
-    ports:
-      - "6379:6379"
     networks:
       - appnet
 
@@ -32,18 +30,45 @@ services:
       - postgres
       - redis
     environment:
-      DATABASE_URL: postgres://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
       NODE_ENV: production
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      TOKEN_SECRET: ${TOKEN_SECRET}
       REDIS_URL: redis://redis:6379
-    command: sh -c "npx sequelize-cli db:migrate && npm start"
+    command: >
+      sh -c "npx sequelize-cli db:migrate
+             --config src/infrastructure/database/config/config.js
+             --migrations-path src/interfaces/http/migrations
+             && npm start"
     ports:
-      - "3001:3001"
+      - "3000:3000"
+    volumes:
+      - uploads:/app/src/uploads
+    networks:
+      - appnet
+
+  frontend:
+    build:
+      context: ../task-deck-web
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+    container_name: frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "80:3000"
     networks:
       - appnet
 
 volumes:
   pgdata:
+  uploads:
 
 networks:
   appnet:
-    name: backendnet
+    name: appnet
