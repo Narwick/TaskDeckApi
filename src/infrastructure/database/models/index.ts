@@ -20,10 +20,11 @@ fs.readdirSync(__dirname)
     );
   })
   .forEach((file: any) => {
-    const model = require(path.join(__dirname, file))(
-      sequelize,
-      Sequelize.DataTypes,
-    );
+  const imported = require(path.join(__dirname, file));
+  const model = (imported.default || imported)(
+    sequelize,
+    Sequelize.DataTypes,
+  );
     db[model.name] = model;
   });
 

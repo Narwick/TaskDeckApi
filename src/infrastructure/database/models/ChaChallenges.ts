@@ -7,6 +7,7 @@ export class ChaChallenges extends Model {
   public cha_title!: string;
   public cha_description!: string;
   public cha_status!: number;
+  public cha_image?: string;
   public cha_created_at!: Date;
   public cha_updated_at!: Date;
 }
@@ -38,6 +39,10 @@ ChaChallenges.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 1,
+    },
+    cha_image: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
     },
     cha_created_at: {
       type: DataTypes.DATE,

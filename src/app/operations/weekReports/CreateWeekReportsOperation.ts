@@ -73,9 +73,11 @@ export class CreateWeekReportsOperation {
         wer_end_date: new Date(params.wer_end_date),
       };
       const weekReportCreated = await this.weekReportsService.create(werData, transaction);
+
+      const achAchievements = [];
       const achievementsData = params.achievements as Array<any>;
       for (const achievement of achievementsData) {
-        await this.achievementsService.create(
+        const created = await this.achievementsService.create(
           {
             ach_title: achievement.ach_title,
             ach_wer_id: weekReportCreated.wer_id,
@@ -83,10 +85,13 @@ export class CreateWeekReportsOperation {
           },
           transaction
         );
+        achAchievements.push(created);
       }
+
+      const chaChallenges = [];
       const challengesData = params.challenges as Array<any>;
       for (const challenge of challengesData) {
-        await this.challengesService.create(
+        const created = await this.challengesService.create(
           {
             cha_title: challenge.cha_title,
             cha_wer_id: weekReportCreated.wer_id,
@@ -94,10 +99,13 @@ export class CreateWeekReportsOperation {
           },
           transaction
         );
+        chaChallenges.push(created);
       }
+
+      const leaLearnings = [];
       const learningsData = params.learnings as Array<any>;
       for (const learning of learningsData) {
-        await this.learningsService.create(
+        const created = await this.learningsService.create(
           {
             lea_title: learning.lea_title,
             lea_wer_id: weekReportCreated.wer_id,
@@ -105,7 +113,9 @@ export class CreateWeekReportsOperation {
           },
           transaction
         );
+        leaLearnings.push(created);
       }
+
       const metricsData: any = params.metrics;
       await this.metricsService.create(
         {
@@ -118,7 +128,7 @@ export class CreateWeekReportsOperation {
         transaction
       );
       await transaction.commit();
-      return { ...weekReportCreated };
+      return { ...weekReportCreated, achAchievements, chaChallenges, leaLearnings };
     } catch (err: any) {
       console.log(err);
       await transaction.rollback();

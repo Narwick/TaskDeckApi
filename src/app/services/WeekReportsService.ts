@@ -15,6 +15,17 @@ export class WeekReportsService extends BaseService<WerWeekReports, WeekReportsR
   async getAll(params: any, transaction?: Transaction) {
     return this.repository.findAndCountAll(params, transaction);
   }
+
+  async getByShareToken(token: string) {
+    return this.repository.findByShareToken(token);
+  }
+
+  async generateShareToken(id: number): Promise<string> {
+    const crypto = await import('crypto');
+    const token = crypto.randomBytes(32).toString('hex');
+    await this.repository.updateById({ id, data: { wer_share_token: token } });
+    return token;
+  }
 }
 
 export default WeekReportsService;

@@ -11,6 +11,16 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - appnet
+
+  redis:
+    image: redis:7
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
     networks:
       - appnet
 
@@ -20,9 +30,12 @@ services:
     restart: always
     depends_on:
       - postgres
+      - redis
     environment:
       DATABASE_URL: postgres://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
       NODE_ENV: production
+      REDIS_URL: redis://redis:6379
+    command: sh -c "npx sequelize-cli db:migrate && npm start"
     ports:
       - "3001:3001"
     networks:

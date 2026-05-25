@@ -8,6 +8,7 @@ export class UsrUser extends Model {
   public usr_email!: string;
   public usr_password!: string;
   public usr_status!: number;
+  public usr_avatar?: string;
   public usr_created_at!: Date;
   public usr_updated_at!: Date;
 }
@@ -35,6 +36,10 @@ UsrUser.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 1,
+    },
+    usr_avatar: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
     },
     usr_created_at: {
       type: DataTypes.DATE,

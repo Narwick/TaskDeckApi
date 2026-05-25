@@ -32,7 +32,7 @@ export class UpdatePasswordCodeResetOperation {
 
     if (!existeEmail) throw this.createError(404, `Usuário não encontrado em nosso base de dados.`);
 
-    if (existeEmail.usr_is_active === 0)
+    if (existeEmail.usr_status === 0)
       throw this.createError(
         401,
         `Usuário inativo, por gentileza, entre em contato com o suporte.`,

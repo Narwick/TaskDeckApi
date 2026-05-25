@@ -7,6 +7,7 @@ export class LeaLearnings extends Model {
   public lea_title!: string;
   public lea_description!: string;
   public lea_status!: number;
+  public lea_image?: string;
   public lea_created_at!: Date;
   public lea_updated_at!: Date;
 }
@@ -38,6 +39,10 @@ LeaLearnings.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 1,
+    },
+    lea_image: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
     },
     lea_created_at: {
       type: DataTypes.DATE,

@@ -34,10 +34,6 @@ export class UserService extends BaseService<UsrUser, UserRepository> {
 
     return this.repository.getByUsrEmail(params, transaction);
   }
-  async getUserAdm(params: any, transaction?: Transaction, getAll: boolean = false) {
-    if (params?.page && getAll === false) return this.repository.getUserAdm(params, transaction);
-    return this.repository.getAllAdm(params, transaction);
-  }
 }
 
 export default UserService;

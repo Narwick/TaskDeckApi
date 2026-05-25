@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { BaseController, RequestUser } from './BaseController';
 import { UserSchema } from '../schemas/UserSchema';
 import {
-  CreateResetCodeOperation,
   UpdatePasswordCodeResetOperation,
   CreateUserOperation,
   UpdateUserOperation,
@@ -11,12 +10,13 @@ import {
 import { UpdatePasswordOperation } from 'src/app/operations/user/UpdatePasswordOperation';
 import { UserService } from 'src/app/services/user';
 import { Op } from 'sequelize';
+import { formidableFields } from '../../../utils/formidableFields';
+import { saveImage } from '../../../utils/fileManager';
 
 interface IUserController {
   userSchema: UserSchema;
   userService: UserService;
   createUserOperation: CreateUserOperation;
-  createResetCodeOperation: CreateResetCodeOperation;
   updatePasswordCodeResetOperation: UpdatePasswordCodeResetOperation;
   updateUserOperation: UpdateUserOperation;
   updatePasswordOperation: UpdatePasswordOperation;
@@ -26,7 +26,6 @@ export class UserController extends BaseController<UserService, UserSchema> {
   userSchema: UserSchema;
   userService: UserService;
   createUserOperation: CreateUserOperation;
-  createResetCodeOperation: CreateResetCodeOperation;
   updatePasswordCodeResetOperation: UpdatePasswordCodeResetOperation;
   updateUserOperation: UpdateUserOperation;
   updatePasswordOperation: UpdatePasswordOperation;
@@ -34,14 +33,12 @@ export class UserController extends BaseController<UserService, UserSchema> {
     userService,
     userSchema,
     createUserOperation,
-    createResetCodeOperation,
     updatePasswordCodeResetOperation,
     updateUserOperation,
     updatePasswordOperation,
   }: IUserController) {
     super(userService, userSchema);
     this.createUserOperation = createUserOperation;
-    this.createResetCodeOperation = createResetCodeOperation;
     this.updatePasswordCodeResetOperation = updatePasswordCodeResetOperation;
     this.updateUserOperation = updateUserOperation;
     this.updatePasswordOperation = updatePasswordOperation;
@@ -70,6 +67,17 @@ export class UserController extends BaseController<UserService, UserSchema> {
     res.status(201).send(result);
   }
 
+  async uploadAvatar(req: any, res: Response) {
+    const data: any = await formidableFields(req, res, ['image']);
+    if (!data.image) return res.status(400).send({ message: 'Imagem obrigatória.' });
+    const result = await saveImage('users', 'avatar', data.image);
+    const updated = await this.userService.updateById({
+      id: req.usr_id,
+      data: { usr_avatar: `/storage/${result.path}` },
+    });
+    res.status(200).send(updated);
+  }
+
   async updateMe(req: RequestUser, res: Response) {
     const data = { data: req.body, id: Number(req.usr_id) };
     this.userSchema.validateUpdateMe(data);
@@ -82,10 +90,7 @@ export class UserController extends BaseController<UserService, UserSchema> {
     const result = await this.service.getOneForParams({ usr_email });
     res.status(201).send(!!result);
   }
-  async createResetCode(req: Request, res: Response) {
-    const result = await this.createResetCodeOperation.execute(req.body);
-    res.send(result);
-  }
+
   async updatePasswordCodeReset(req: Request, res: Response) {
     if (this.schema) {
       await this.schema.validateCodeReset(req.body);
@@ -114,10 +119,6 @@ export class UserController extends BaseController<UserService, UserSchema> {
     res.send(users);
   }
 
-  async getUserAdm(req: any, res: Response) {
-    const result = await this.service.getUserAdm(req.query);
-    res.status(200).send(result);
-  }
   async updateAdmById(req: any, res: Response) {
     const data: any = {
       data: req.body,

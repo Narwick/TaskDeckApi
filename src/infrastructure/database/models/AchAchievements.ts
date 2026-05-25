@@ -7,6 +7,7 @@ export class AchAchievements extends Model {
   public ach_title!: string;
   public ach_description!: string;
   public ach_status!: number;
+  public ach_image?: string;
   public ach_created_at!: Date;
   public ach_updated_at!: Date;
 }
@@ -38,6 +39,10 @@ AchAchievements.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 1,
+    },
+    ach_image: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
     },
     ach_created_at: {
       type: DataTypes.DATE,

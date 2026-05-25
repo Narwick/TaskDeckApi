@@ -95,9 +95,8 @@ export class WeekReportsSchema extends BaseValidateClass<Create, Update, UpdateS
   validateUpdate(dataToValidate: Update): IValidade {
     const schema = this.joi.object({
       data: this.joi.object({
-        usr_name: this.joi.string(),
-        usr_email: this.joi.string().email(),
-        usr_password: this.joi.string(),
+        wer_start_date: this.joi.string().optional(),
+        wer_end_date: this.joi.string().optional(),
       }),
       id: this.joi.number().required(),
     });
@@ -111,7 +110,7 @@ export class WeekReportsSchema extends BaseValidateClass<Create, Update, UpdateS
 
   validateUpdateStatus(dataToValidate: UpdateStatus): IValidade {
     const schema = this.joi.object({
-      usr_status: this.joi.number().valid(0, 1).required(),
+      wer_status: this.joi.number().valid(0, 1).required(),
     });
 
     const { error } = schema.validate(dataToValidate);

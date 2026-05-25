@@ -1,4 +1,5 @@
 // index.ts
+import './src/utils/estruturaPastas';
 import { HttpServer } from './http';
 
 const httpServer = new HttpServer();

@@ -7,6 +7,7 @@ export class WerWeekReports extends Model {
   public wer_start_date!: Date;
   public wer_end_date!: Date;
   public wer_status!: number;
+  public wer_share_token?: string;
   public wer_created_at!: Date;
   public wer_updated_at!: Date;
 }
@@ -38,6 +39,10 @@ WerWeekReports.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 1,
+    },
+    wer_share_token: {
+      type: DataTypes.STRING(64),
+      allowNull: true,
     },
     wer_created_at: {
       type: DataTypes.DATE,
