@@ -2,8 +2,6 @@
 import { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 dotenv.config();
-const dist =
-  process.env.NODE_ENV === 'local' || process.env.NODE_ENV === 'develop_ext' ? '' : 'dist/';
 const ambienteDev =
   process.env.NODE_ENV === 'local' || process.env.NODE_ENV === 'develop_ext' ? true : false;
 
@@ -45,7 +43,7 @@ export class HttpServer {
     }
     app.use(loadControllers(route02, { cwd: __dirname }));
         
-    const img = join(__dirname, `${dist}src/uploads`);
+    const img = join(__dirname, `src/uploads`);
     app.use('/storage', express.static(img));
     app.use(express.json());
 

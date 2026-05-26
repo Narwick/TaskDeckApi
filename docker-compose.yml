@@ -44,7 +44,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - uploads:/app/src/uploads
+      - uploads:/app/dist/src/uploads
     networks:
       - appnet
 
